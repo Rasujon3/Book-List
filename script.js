@@ -1,5 +1,6 @@
 // Get the UI Element
 let form = document.querySelector('#book-form');
+let booklist = document.querySelector('#book-list');
 
 
 // Book Class
@@ -13,10 +14,8 @@ class Book{
 
 // UI Class
 class UI {
-    constructor(){
-
-    }
-    addToBooklist(book){
+    
+    static addToBooklist(book){
         let list = document.querySelector('#book-list');
         let row = document.createElement('tr');
         row.innerHTML = `
@@ -29,12 +28,12 @@ class UI {
         list.appendChild(row);
 
     }
-    clearFields(){
+    static clearFields(){
        document.querySelector("#title").value = '';
      document.querySelector("#author").value = '';
      document.querySelector("#isbn").value = '';
     }
-    showAlert(message, className){
+    static showAlert(message, className){
         let div = document.createElement('div');
         div.className = `alert ${className}`;
         div.appendChild(document.createTextNode(message));
@@ -47,10 +46,17 @@ class UI {
             document.querySelector('.alert').remove();
         }, 3000);
     }
+    static deleteFromBook(target){
+        if (target.hasAttribute('href')) {
+            target.parentElement.parentElement.remove();
+            UI.showAlert('Book Removed!', 'success');
+        }
+    }
 }
 
 // Add Event Listener
 form.addEventListener('submit', newBook);
+booklist.addEventListener('click', removeBook);
 
 
 // Define functions
@@ -59,20 +65,19 @@ function newBook(e){
      author = document.querySelector("#author").value,
      isbn = document.querySelector("#isbn").value;
 
-     let ui = new UI();
 
      if(title === '' || author === '' || isbn === ''){
         
-        ui.showAlert("Please fill all the fields!" , "error");
+        UI.showAlert("Please fill all the fields!" , "error");
      } else {
 
         let book = new Book(title,author,isbn);
 
-        ui.addToBooklist(book);
+        UI.addToBooklist(book);
    
-        ui.clearFields();
+        UI.clearFields();
 
-        ui.showAlert("Book Added" , "success");
+        UI.showAlert("Book Added" , "success");
 
      }
 
@@ -80,5 +85,13 @@ function newBook(e){
      
 
 
+    e.preventDefault();
+}
+
+function removeBook(e){
+
+   
+    UI.deleteFromBook(e.target);
+   
     e.preventDefault();
 }
